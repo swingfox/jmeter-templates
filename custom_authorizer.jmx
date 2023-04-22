@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Custom Authorizer Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="queryParamKey1" elementType="Argument">
+            <stringProp name="Argument.name">queryParamKey1</stringProp>
+            <stringProp name="Argument.value">queryParamValue1</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="queryParamKey2" elementType="Argument">
+            <stringProp name="Argument.name">queryParamKey2</stringProp>
+            <stringProp name="Argument.value">queryParamValue2</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="queryParamKey3" elementType="Argument">
+            <stringProp name="Argument.name">queryParamKey3</stringProp>
+            <stringProp name="Argument.value">queryParamValue3</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="timeEpoch" elementType="Argument">
+            <stringProp name="Argument.name">timeEpoch</stringProp>
+            <stringProp name="Argument.value">sampletime</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sharedSecret" elementType="Argument">
+            <stringProp name="Argument.name">sharedSecret</stringProp>
+            <stringProp name="Argument.value">sampleSharedSecret</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="EncodedHash" elementType="Argument">
+            <stringProp name="Argument.name">EncodedHash</stringProp>
+            <stringProp name="Argument.value">EncodedHash</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Hashed" elementType="Argument">
+            <stringProp name="Argument.name">Hashed</stringProp>
+            <stringProp name="Argument.value">sample256BitHash</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Custom_Authorizer_Load_Test" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Link with Custom Authorizer" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="{{queryParamKey1}}" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                <stringProp name="Argument.value">{{queryParamValue1}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">{{queryParamKey1}}</stringProp>
+              </elementProp>
+              <elementProp name="{{queryParamKey2}}" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{{queryParamValue2}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">{{queryParamKey2}}</stringProp>
+              </elementProp>
+              <elementProp name="{{queryParamKey2}}" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{{queryParamValue3}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">{{queryParamKey2}}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">{{serverName}}</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">{{urlPath}}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+            <stringProp name="scriptLanguage">beanshell</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+
+// Get latest timestamp
+var timeEpoch = System.currentTimeMillis();
+
+String timeString = (timeEpoch/1000).toString();
+vars.put(&quot;timeEpoch&quot;,timeString);
+
+/* The vars are coming from the user defined variables in the project.
+ *  Not from the request parameter itself.
+ */
+String encodedHash = 
+&quot;{{queryParamKey1}}:&quot; + vars.get(&quot;{{queryParamKey1}}&quot;) + &quot;\n&quot; + 
+&quot;{{queryParamKey2}}:&quot; + vars.get(&quot;{{queryParamKey2}}&quot;) + &quot;\n&quot; + 
+&quot;{{queryParamKey3}}:&quot; + vars.get(&quot;{{queryParamKey3}}&quot;) + &quot;\n&quot; + 
+&quot;timestamp:&quot; + vars.get(&quot;timeEpoch&quot;) + &quot;\n&quot; +  
+&quot;sharedSecret:&quot; + vars.get(&quot;sharedSecret&quot;);
+
+vars.put(&quot;DL_token&quot;,encodedHash);
+
+// Get Base64 string
+String encodedString = Base64.getEncoder().encodeToString(encodedHash.getBytes());
+
+
+// Encode Base64 to SHA-256
+MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);
+byte[] hash = digest.digest(encodedString.getBytes(&quot;UTF-8&quot;));
+StringBuffer hexString = new StringBuffer();
+
+for (int i = 0; i &lt; hash.length; i++) {
+     String hex = Integer.toHexString(0xff &amp; hash[i]);
+     if(hex.length() == 1) hexString.append(&apos;0&apos;);
+        hexString.append(hex);
+}
+
+String Hashed = hexString.toString();
+vars.put(&quot;Hashed&quot;,Hashed);
+log.info(&quot;encodedHash: &quot; + encodedHash);
+log.info(&quot;hash: &quot; + Hashed);
+
+// Save parameters are properties
+props.put(&quot;Hashed&quot;, vars.get(&quot;Hashed&quot;));
+props.put(&quot;timeEpoch&quot;, vars.get(&quot;timeEpoch&quot;));
+
+
+
+
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Authorizer" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">${Hashed}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Timestamp</stringProp>
+                <stringProp name="Header.value">${timeEpoch}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Link" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">CDN_Link</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.link</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">No available CDN Link</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
