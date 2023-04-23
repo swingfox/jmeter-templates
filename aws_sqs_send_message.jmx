@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="AWS SQS Test" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Send Message Load Test API" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="Action" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">SendMessage</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">Action</stringProp>
+              </elementProp>
+              <elementProp name="MessageBody" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${messageBody}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">MessageBody</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">sqs.us-east-1.amazonaws.com</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">/{{accountNumber}}/{{sqsName}}</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="AccessKey" elementType="Argument">
+                <stringProp name="Argument.name">AccessKey</stringProp>
+                <stringProp name="Argument.value">{{accessKey}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="SecretKey" elementType="Argument">
+                <stringProp name="Argument.name">SecretKey</stringProp>
+                <stringProp name="Argument.value">{{secretAccessKey}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sqsName" elementType="Argument">
+                <stringProp name="Argument.name">sqsName</stringProp>
+                <stringProp name="Argument.value">{{sqsName}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="awsAccountId" elementType="Argument">
+                <stringProp name="Argument.name">awsAccountId</stringProp>
+                <stringProp name="Argument.value">{{accountNumber}}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </Arguments>
+          <hashTree/>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Authorizer Preprocessor" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import java.util.UUID;
+import org.apache.commons.codec.digest.DigestUtils;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import org.apache.commons.codec.digest.HmacUtils;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
+import static java.net.URLEncoder.encode;
+
+
+String apiKey = vars.get(&quot;AccessKey&quot;);
+String apiSecret = vars.get(&quot;SecretKey&quot;);
+String sqsName =  vars.get(&quot;sqsName&quot;);
+String awsAccountId = vars.get(&quot;awsAccountId&quot;);
+
+
+StringBuilder result = new StringBuilder();
+Random random = new Random();
+
+result.append(&quot;%7B%22&quot;);
+result.append(&quot;requestId%22%3A%22&quot;).append(UUID.randomUUID().toString()).append(&quot;%22%2C%22&quot;);
+result.append(&quot;curversion%22%3A%20%22&quot;+ (random.nextInt(10- 1) + 1)+ &quot;.0%22%0A%7D&quot;);
+//String messageBody = &apos;${__urlencode(${messageBody})}&apos;;
+String messageBody = result.toString();
+
+String method = &quot;GET&quot;;
+String service = &quot;sqs&quot;;
+String host = &quot;sqs.us-east-1.amazonaws.com&quot;;
+String region = &quot;us-east-1&quot;;
+String endpoint = &quot;https://sqs.us-east-1.amazonaws.com/&quot; + awsAccountId + &quot;/&quot;.concat(sqsName);
+String request_parameters = &quot;Action=SendMessage&amp;MessageBody=&quot;.concat(messageBody);
+
+log.info(&quot;url_encoder: &quot; + messageBody);
+LocalDateTime  today = LocalDateTime.now(ZoneId.of( &quot;UTC&quot;));
+// Create a date for headers and the credential string
+String amzdate = today.format(DateTimeFormatter.ofPattern(&quot;yyyyMMdd&apos;T&apos;HHmmss&quot;)) + &quot;Z&quot;;
+String datestamp = today.format(DateTimeFormatter.ofPattern(&quot;yyyyMMdd&quot;)); // Date w/o time, used in credential scope
+//String amzdate = &quot;20210825T120834Z&quot;;
+//String datestamp = &quot;20210825&quot;;
+
+// ************* TASK 1: CREATE A CANONICAL REQUEST *************
+// http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
+
+// Step 1 is to define the verb (GET, POST, etc.)--already done.
+
+// Step 2: Create canonical URI--the part of the URI from domain to query 
+// string (use &apos;/&apos; if no path)
+String canonicalUri = &quot;/&quot;+awsAccountId+&quot;/&quot;.concat(sqsName);
+
+// Step 3: Create the canonical query string. In this example (a GET request),
+// request parameters are in the query string. Query string values must
+// be URL-encoded (space=%20). The parameters must be sorted by name.
+// For this example, the query string is pre-formatted in the request_parameters variable.
+String canonicalQueryString = request_parameters;
+
+// Step 4: Create the canonical headers and signed headers. Header names
+// must be trimmed and lowercase, and sorted in code point order from
+// low to high. Note that there is a trailing \n.
+String canonicalHeaders = &quot;host:&quot; + host + &quot;\n&quot; + &quot;x-amz-date:&quot; + amzdate + &quot;\n&quot;;
+
+// Step 5: Create the list of signed headers. This lists the headers
+// in the canonical_headers list, delimited with &quot;;&quot; and in alpha order.
+// Note: The request can include any headers; canonical_headers and
+// signed_headers lists those that you want to be included in the 
+// hash of the request. &quot;Host&quot; and &quot;x-amz-date&quot; are always required.
+String signedHeaders = &quot;host;x-amz-date&quot;;
+
+// Step 6: Create payload hash (hash of the request body content). For GET
+// requests, the payload is an empty string (&quot;&quot;).
+String payloadHash = DigestUtils.sha256Hex(&quot;&quot;.getBytes(&quot;UTF-8&quot;));
+
+// Step 7: Combine elements to create canonical request
+String canonicalRequest = method + &quot;\n&quot; + canonicalUri + &quot;\n&quot; + canonicalQueryString + &quot;\n&quot; + canonicalHeaders + &quot;\n&quot; + signedHeaders + &quot;\n&quot;  + payloadHash;
+
+// ************* TASK 2: CREATE THE STRING TO SIGN*************
+// Match the algorithm to the hashing algorithm you use, either SHA-1 or
+// SHA-256 (recommended)
+String algorithm = &quot;AWS4-HMAC-SHA256&quot;;
+String credentialScope = datestamp + &quot;/&quot; + region + &quot;/&quot; + service + &quot;/&quot; + &quot;aws4_request&quot;;
+String stringToSign = algorithm + &quot;\n&quot; + amzdate + &quot;\n&quot; + credentialScope + &quot;\n&quot; + DigestUtils.sha256Hex(canonicalRequest.getBytes(&quot;UTF-8&quot;));
+
+// ************* TASK 3: CALCULATE THE SIGNATURE *************
+// Create the signing key using the function defined above.
+
+byte[] kDate = new HmacUtils(HMAC_SHA_256, (&apos;AWS4&apos; + apiSecret).getBytes()).hmac(datestamp.getBytes(&quot;UTF-8&quot;));
+byte[] kRegion = new HmacUtils(HMAC_SHA_256, kDate).hmac(region.getBytes(&quot;UTF-8&quot;));
+byte[] kService = new HmacUtils(HMAC_SHA_256, kRegion).hmac(service.getBytes(&quot;UTF-8&quot;));
+byte[] kSigning = new HmacUtils(HMAC_SHA_256, kService).hmac(&quot;aws4_request&quot;.getBytes(&quot;UTF-8&quot;));
+
+// Sign the string_to_sign using the signing_key
+String signature = HmacUtils.hmacSha256Hex(kSigning, stringToSign.getBytes(&quot;UTF-8&quot;));
+
+// ************* TASK 4: ADD SIGNING INFORMATION TO THE REQUEST *************
+// The signing information can be either in a query string value or in 
+// a header named Authorization. This code shows how to use a header.
+// Create authorization header and add to request headers
+String authorizationHeader = algorithm + &apos; &apos; + &quot;Credential=&quot;+ apiKey + &apos;/&apos; + credentialScope + &quot;, &quot; + &quot;SignedHeaders=&quot; + signedHeaders + &quot;, &quot; + &quot;Signature=&quot; + signature;
+
+log.info(&quot;auth_header: &quot; + authorizationHeader);
+vars.put(&quot;messageBody&quot;, messageBody);
+vars.put(&quot;x-amz-date&quot;, amzdate);
+vars.put(&quot;Authorization&quot;, authorizationHeader);
+vars.put(&quot;canonicalQueryString&quot;, canonicalQueryString);</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">${Authorization}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">x-amz-date</stringProp>
+                <stringProp name="Header.value">${x-amz-date}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
